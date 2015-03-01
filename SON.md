@@ -1,18 +1,3 @@
-SMLs
-============================
-
-Pronounced (smiles). The web uses languages such as css, html, json to communicate declarative structures to the computer.
-
-Like JQuery we want to **write less, do more.** 
-
-After using preprocessors like emmet, yaml, jade, and stylus, this is an effort to produce a single parser that can transpile to/from json, html and css. 
-
-* SON -> JSON
-* SML -> HTML
-* SSS -> CSS
-
-
-
 SON (Simple Object Notation)
 ============================
 
@@ -287,7 +272,6 @@ Also if value contains spaces then it should be wrapped in quotes. We'll use thi
 What about paragraphs of text? '~' is for a block of text. They can be across multiple lines.
 
 '//' are for block comments. They can be across multiple lines as long as they are in blocks.
-'#' is for one line comments, everything after it is ignored.
 
 ```
 firstName John
@@ -295,7 +279,7 @@ lastName Smith
 isAlive true
 age 25
 height_cm 167.6
-address - street='21 2nd Street' city='New York' state=NY postalCode=10021-3100 #one liner
+address - street='21 2nd Street' city='New York' state=NY postalCode=10021-3100 //one liner
 
 // Notes is in markdown 
 	A comment can be accross multi line
@@ -337,14 +321,3 @@ daysFree **
 ### Notes
  * SON requires multiple character look ahead for parsing
  * This is just a spec, I am working on the parser but it will take a while.
-
-
-SML
-====
-Todo
-
-SSS
-===
-Todo
-
-
