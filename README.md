@@ -5,7 +5,7 @@ Pronounced (smiles). The web uses languages such as css, html, json to communica
 
 Like JQuery we want to **write less, do more.** 
 
-After using preprocessors like yaml, jade, and stylus, this is an effort to produce a single parser that can transpile to/from json, html and css. 
+After using preprocessors like emmet, yaml, jade, and stylus, this is an effort to produce a single parser that can transpile to/from json, html and css. 
 
 * SON -> JSON
 * SML -> HTML
@@ -281,13 +281,13 @@ daysFree **
 ```
 
 Sometimes we'd like to write many properties in one line. Let's make 'address' property a one liner.
-We can write values with spaces. The only requirement is there should be no space between '='. 
-It should always be property=val. We'll use this syntax for sml and sss.
+The requirement is that there should be no space between '='. It should always be property=val. 
+Also if value contains spaces then it should be wrapped in quotes. We'll use this syntax across sml and sss.
 
 What about paragraphs of text? '~' is for a block of text. They can be across multiple lines.
 
-'//' is for comments. They're ignored while parsing. 
-They can be across multiple lines too as long as they are in blocks.
+'//' are for block comments. They can be across multiple lines as long as they are in blocks.
+'#' is for one line comments, everything after it is ignored.
 
 ```
 firstName John
@@ -295,7 +295,7 @@ lastName Smith
 isAlive true
 age 25
 height_cm 167.6
-address - street='21 2nd Street' city=New York state=NY postalCode=10021-3100 #one liner
+address - street='21 2nd Street' city='New York' state=NY postalCode=10021-3100 #one liner
 
 // Notes is in markdown 
 	A comment can be accross multi line
