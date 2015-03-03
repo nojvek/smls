@@ -130,9 +130,11 @@ daysFree [
     [0 1 1 1 1 0 0
 ```
 
-Pretty cool aye! the '{' and '[' look awkward. Let's use '-' to indicate start of new object. '*' (many spikes) to indicate start of array. The first word is property and everything after that is either a string, number, null or true/false.
+### Basics
 
-If we're in an array then the whole line is used as a value. Also let's drop the '-' to indicate object of object.
+* Pretty cool aye! the '{' and '[' look awkward. Let's use '-' to indicate start of new object. '*' (many spikes) to indicate start of array. 
+* The first word is property and everything after that is either a string, number, null or true/false.
+* If we're in an array then the whole line is used as a value. Also let's drop the '-' to indicate object of object.
 
 ```
 firstName John
@@ -188,17 +190,14 @@ daysFree *
     * 0 1 1 1 1 0 0
 ```
 
-Oh that looks Szhweeeet!. 
+### List of lists and tables
 
 Let's add some sugar to add comma delimited lists and space limited lists.
 
-',' or '|' can be use to indicate how to delmit a list after '\*'
-
-'\*,' for comma separated list. '\*|' for pipe separated list.
-
-'\*-' for list of objects as table
-
-'\**' for list of lists
+* ',' or '|' can be use to indicate how to delmit a list after '\*'
+* '\*,' for comma separated list. '\*|' for pipe separated list.
+* '\*-' for list of objects as table
+* '\**' for list of lists
 
 Examples :
 ```
@@ -223,8 +222,6 @@ Examples :
 ```
 
 For commas in values, we wrap it around quotes. Also standard escape characters apply for strings e.g "\'"
-
-After the koolaid syntax:
 
 ```
 firstName John
@@ -265,13 +262,13 @@ daysFree **
     0 1 1 1 1 0 0
 ```
 
+### Comments and Text
 Sometimes we'd like to write many properties in one line. Let's make 'address' property a one liner.
 The requirement is that there should be no space between '='. It should always be property=val. 
 Also if value contains spaces then it should be wrapped in quotes. We'll use this syntax across sml and sss.
 
-What about paragraphs of text? '~' is for a block of text. They can be across multiple lines.
-
-'//' are for block comments. They can be across multiple lines as long as they are in blocks.
+* '~' for a block of text. They can be across multiple lines.
+* '//' for block comments. They are block level too
 
 ```
 firstName John
@@ -317,7 +314,3 @@ daysFree **
     0 1 0 0 0 0 0
     0 1 1 1 1 0 0
 ```
-
-### Notes
- * SON requires multiple character look ahead for parsing
- * This is just a spec, I am working on the parser but it will take a while.
