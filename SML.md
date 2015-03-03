@@ -730,7 +730,7 @@ ht
 					.linkedin > a href=# linkedin	
 					.youtube > a href=# youtube	
 						
-		sc t=text/javascript ~
+		js ~
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-1234567']);
 			_gaq.push(['_trackPageview']);
