@@ -5,7 +5,7 @@ This is a sample html file of the homepage of a hypothetical company 'X Inc'.
 
 Let's reduce the amount of typing. As you'll see ideas from [Jade](http://jade-lang.com/) and [Emmet](http://emmet.io/) are borrowed.
 
-Note that since SML will also transpile to XML as its XHTML compliant
+Note that SML will also transpile to XML as its XHTML compliant
 ```
 <!DOCTYPE html>
 <html>
