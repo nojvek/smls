@@ -535,7 +535,7 @@ TODO: List table with fuzzy match nodes and their attributes.
 To turn on fuzzy matching add a '///: fuzzy=true' comment at the start of the file
 
 ```
-///: fuzzy=true
+///: fuzzy
 doctype html
 ht
 	he
