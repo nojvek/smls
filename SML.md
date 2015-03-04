@@ -636,7 +636,7 @@ ht
    
 ```
 
-### CSS mixins and transcludes
+### mixins and transcludes
 
 * css tag translates to "link href=... type=text/css rel=styleshset"
 * js tag translates to "script type=text/javascript
