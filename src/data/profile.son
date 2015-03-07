@@ -1,0 +1,42 @@
+firstName John
+lastName Smith
+isAlive true
+age 25
+height_cm 167.6
+address - street='21 2nd Street' city='New York' state=NY postalCode=10021-3100 //one liner
+
+// Notes is in markdown 
+	A comment can be accross multi line
+	as long as it is in a block
+
+notes ~
+	John's a pretty cool guy. He's got his life together
+	I think we should promote him next year
+
+	This is only and only if he **kicks ass** in [projectX](http://projectX)
+
+phoneNumbers *-
+	type	number
+	home	212-555-1234
+	office  646-555-4567
+	cell	425-999-1234
+
+children * Pete Bob Rebecca Alicia
+
+schedule *-,
+	time,   event
+	8pm,	'Pete\'s birthday party don\'t forget gifts'
+	4pm,	meet Gibson
+	9pm,	"Date with Laura, buy flowers"
+
+achievements *
+	1st Position 2008 Blind Coding
+	2nd Position 2015 Ninja Debugger
+	1st Position 2014 Human Compiler (This dude writes assembly)
+
+daysFree **
+	mon tue wed thu fri sat sun
+	0 0 0 1 1 0 0
+	0 1 0 1 1 0 0
+	0 1 0 0 0 0 0
+	0 1 1 1 1 0 0
