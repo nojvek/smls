@@ -82,24 +82,48 @@ class SON
 		obj = {}
 		for block in tree.blocks
 			line = block.line
+
+			if line.substr(0,2) == "//" then continue
+
 			matches = line.match(/(\w+)(\s+(.*))?/)
 			prop = matches[1]
 			val = matches[3]
 
-			switch val
-				when undefined then val = @parseObject(block)
-				when '*' then val = @parseArray(block)
+			if val == undefined then val = @parseObject(block)
+			else if val == '*' then val = @parseArray(block)
+			else if val == '*-' then val = @parseArray(block, table = true)
+			else if val == '*-,' then val = @parseArray(block, table = true, sep="\\s*,\\s*")
+			else if val == '*-|' then val = @parseArray(block, table = true, sep="\\s*\|\\s*")
 
 			obj[prop] = val
 
 		return obj
 
-	@parseArray: (tree) ->
+	@parseArray: (tree, table = false, sep="\\s+") ->
 		arr = []
+
+		headers = null
+		sepRegexp = new RegExp(sep)
 
 		if tree and tree.blocks
 			for block in tree.blocks
 				line = block.line
+
+				if line.substr(0,2) == "//" then continue
+
+				if table 
+					elems = line.split(sepRegexp)
+
+					if not headers
+						headers = elems
+						continue
+					else 
+						# do length check
+						line = {}
+						for header, i in headers
+							line[header] = elems[i]
+
+				else if line == "-" then line = @parseObject(block)
 
 				arr.push(line)
 		return arr

@@ -4,6 +4,9 @@ profile
 	name Noj Vek
 	blurb I hand craft aesthetic applications
 
+
+// This is a comment here
+
 experiences *
 	-	company_name=Microsoft company_url=http://microsoft.com company_logo=assets/microsoft_logo.png
 		position='Software Engineer' 	location='Vancouver, Canada & Seattle, United States'
