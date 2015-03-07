@@ -1,0 +1,31 @@
+<!doctype html5>
+<html>
+	<head>
+	    <script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="son.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				$.ajax({
+					url: 'data/resume.son',
+					success: function(str) {
+						$("#in").text(str)
+						data = SON.parse(str)
+						$("#out").text(JSON.stringify(data, null, 4))
+					}
+				})
+			})
+		</script>
+		<style>
+			pre {
+				margin: 20px;
+				border: 1px solid #ddd;
+				padding: 20px;
+				overflow: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<pre id="in"></pre>
+		<pre id="out"></pre>
+	</body>
+</html>

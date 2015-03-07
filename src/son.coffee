@@ -1,21 +1,13 @@
 c = console
 
-$ ->
-	$.ajax
-		url: 'data/resume.son'
-		#url: 'son.coffee'
-		success : (data) ->
-			$("#in").text data
-			blocks = BlockParser.parseBlocks(data)
-			$("#out").text JSON.stringify(blocks, null, 4)
-
-
 class BlockParser
+	## TODO, make this work for spaced indents as well
 	@tokenizeIndents: (str) ->
 		prevIndent = 0
 		baseIndent = -1
 		tokens = []
 
+		#TODO: optimize this for single character look ahead
 		for line, lineNum in str.split("\n")
 			if $.trim(line) == "" then continue
 
@@ -27,12 +19,12 @@ class BlockParser
 					prevIndent = indents
 
 					if indentChange > 0
-						tokens.push(type:'indent')
+						tokens.push(type:'indent', lineNum: lineNum)
 					else if indentChange < 0
 						for i in [0...-indentChange]
-							tokens.push(type:'dedent')
+							tokens.push(type:'dedent', lineNum: lineNum)
 					
-					tokens.push(type: 'line', val: $.trim(line.substr(index)))
+					tokens.push(type: 'line', lineNum: lineNum, val: $.trim(line.substr(index)))
 					break;
 
 		if prevIndent > 0
@@ -43,14 +35,12 @@ class BlockParser
 
 		return tokens
 
-	@parseBlocks: (str) ->
-		tokens = @tokenizeIndents(str)
-
+	@parseBlocks: (lineTokens) ->
 		rootBlock = {blocks:[]}
 		index = 0
 
-		peek = -> tokens[index]
-		consume = -> index++;  tokens[index-1]
+		peek = -> lineTokens[index]
+		consume = -> index++
 
 
 		parseBlock = (parentBlock) ->
@@ -61,7 +51,7 @@ class BlockParser
 				switch token.type
 					when 'line'
 						consume()
-						block = {line: token.val}
+						block = {line: token.val, lineNum: token.lineNum}
 						parentBlock.blocks.push(block)
 
 					when 'indent'
@@ -76,42 +66,17 @@ class BlockParser
 			return parentBlock
 
 
-		rootBlock = parseBlock({blocks:[]})
+		rootBlock = parseBlock({line:"", blocks:[]})
 		return rootBlock
 
-
+	@parse: (str) ->
+		lineTokens = @tokenizeIndents(str)
+		blockTree = @parseBlocks(lineTokens)
+		return blockTree
 
 
 class SON
-	inoutdent: (str) ->
-		indentLevel = 0
-		tokens = []
-
-		for line in str.split("\n")
-			if $.trim(line) == "" then continue
-			numIndents = 0
-
-			for chr, index in line
-				if chr == "\t" then numIndents += 1 
-				else
-					indentChange = numIndents - indentLevel
-					indentLevel = numIndents
-
-					if indentChange > 0
-						tokens.push(type:'indent', val: indentChange)
-					else if indentChange < 0
-						tokens.push(type:'dedent', val: -indentChange)
-					
-
-					tokens.push(type: 'line', val: $.trim(line.substr(index)))
-					break;
-
-		if indentLevel > 0
-			tokens.push(type:'dedent', val: indentLevel)
-
-		indentLevel = 0
-		outStr = []
-
+	@helpers: ->
 		tabs = (numTabs) ->
 			str = ""
 			(str += "\t" for i in [0...numTabs] by 1)
@@ -138,10 +103,40 @@ class SON
 		
 		return outStr.join("")
 
+	@parseObject: (tree) ->
+		if not (tree and tree.blocks) then return null
+
+		obj = {}
+		for block in tree.blocks
+			line = block.line
+			matches = line.match(/(\w+)(\s+(.*))?/)
+			prop = matches[1]
+			val = matches[3]
+
+			switch val
+				when undefined then val = @parseObject(block)
+				when '*' then val = @parseArray(block)
+
+			obj[prop] = val
+
+		return obj
+
+	@parseArray: (tree) ->
+		arr = []
+
+		if tree and tree.blocks
+			for block in tree.blocks
+				line = block.line
+
+				arr.push(line)
+		return arr
 
 	@parse: (str) ->
-		son = new SON
-		return son.inoutdent(str)
+		tree = BlockParser.parse(str)
+		data = @parseObject(tree)
+		c.log(tree)
+
+		return data
 
 	@dump: (object) ->
 		c.log(object)
