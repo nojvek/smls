@@ -76,33 +76,6 @@ class BlockParser
 
 
 class SON
-	@helpers: ->
-		tabs = (numTabs) ->
-			str = ""
-			(str += "\t" for i in [0...numTabs] by 1)
-			return str
-
-		for token, i in tokens
-			if token.type == 'indent'
-				outStr.push("{\n")
-				indentLevel += token.val
-
-			if token.type == 'dedent'
-
-				for i in [1..token.val] by 1
-					indentLevel--
-					outStr.push(tabs(indentLevel) + "}\n")
-			
-			else if token.type == 'line'
-				line = tabs(indentLevel) + token.val
-
-				if i + 1< tokens.length and tokens[i + 1].type != 'indent'
-					line += ";\n"
-				outStr.push(line)
-
-		
-		return outStr.join("")
-
 	@parseObject: (tree) ->
 		if not (tree and tree.blocks) then return null
 
@@ -138,7 +111,14 @@ class SON
 
 		return data
 
+
 	@dump: (object) ->
+		# TODO Implement dumper
 		c.log(object)
+
+	@tabs: (numTabs) ->
+		str = ""
+		(str += "\t" for i in [0...numTabs] by 1)
+		return str
 
 c.log 'ready'
