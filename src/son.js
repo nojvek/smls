@@ -123,7 +123,7 @@ SON = (function() {
   function SON() {}
 
   SON.parseObject = function(tree) {
-    var block, line, matches, obj, prop, sep, table, val, _i, _len, _ref;
+    var block, line, matches, obj, prop, table, val, _i, _len, _ref;
     if (!(tree && tree.blocks)) {
       return null;
     }
@@ -144,27 +144,23 @@ SON = (function() {
         val = this.parseArray(block);
       } else if (val === '*-') {
         val = this.parseArray(block, table = true);
-      } else if (val === '*-,') {
-        val = this.parseArray(block, table = true, sep = "\\s*,\\s*");
-      } else if (val === '*-|') {
-        val = this.parseArray(block, table = true, sep = "\\s*\|\\s*");
       }
       obj[prop] = val;
     }
     return obj;
   };
 
-  SON.parseArray = function(tree, table, sep) {
+  SON.parseArray = function(tree, table, grid) {
     var arr, block, elems, header, headers, i, line, sepRegexp, _i, _j, _len, _len1, _ref;
     if (table == null) {
       table = false;
     }
-    if (sep == null) {
-      sep = "\\s+";
+    if (grid == null) {
+      grid = false;
     }
     arr = [];
     headers = null;
-    sepRegexp = new RegExp(sep);
+    sepRegexp = /"(?:[^\\]*(?:\\.)?)*"|'(?:[^\\]*(?:\\.)?)*'|\S+/g;
     if (tree && tree.blocks) {
       _ref = tree.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -174,7 +170,7 @@ SON = (function() {
           continue;
         }
         if (table) {
-          elems = line.split(sepRegexp);
+          elems = line.match(sepRegexp);
           if (!headers) {
             headers = elems;
             continue;

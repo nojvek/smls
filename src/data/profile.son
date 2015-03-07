@@ -23,11 +23,11 @@ phoneNumbers *-
 
 children * Pete Bob Rebecca Alicia
 
-schedule *-,
-	time,   event
-	8pm,	'Pete\'s birthday party don\'t forget gifts'
-	4pm,	meet Gibson
-	9pm,	"Date with Laura, buy flowers"
+schedule *-
+	time 	event
+	8pm		'Pete\'s birthday party don\'t forget "gifts"'
+	4pm		'meet Gibson'
+	9pm		"Date with Laura, buy flowers"
 
 achievements *
 	1st Position 2008 Blind Coding

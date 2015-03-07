@@ -85,6 +85,7 @@ class SON
 
 			if line.substr(0,2) == "//" then continue
 
+			# todo - handle one liners
 			matches = line.match(/(\w+)(\s+(.*))?/)
 			prop = matches[1]
 			val = matches[3]
@@ -92,18 +93,16 @@ class SON
 			if val == undefined then val = @parseObject(block)
 			else if val == '*' then val = @parseArray(block)
 			else if val == '*-' then val = @parseArray(block, table = true)
-			else if val == '*-,' then val = @parseArray(block, table = true, sep="\\s*,\\s*")
-			else if val == '*-|' then val = @parseArray(block, table = true, sep="\\s*\|\\s*")
 
 			obj[prop] = val
 
 		return obj
 
-	@parseArray: (tree, table = false, sep="\\s+") ->
+	@parseArray: (tree, table = false, grid = false) ->
 		arr = []
 
 		headers = null
-		sepRegexp = new RegExp(sep)
+		sepRegexp = /"(?:[^\\]*(?:\\.)?)*"|'(?:[^\\]*(?:\\.)?)*'|\S+/g
 
 		if tree and tree.blocks
 			for block in tree.blocks
@@ -112,7 +111,7 @@ class SON
 				if line.substr(0,2) == "//" then continue
 
 				if table 
-					elems = line.split(sepRegexp)
+					elems = line.match(sepRegexp)
 
 					if not headers
 						headers = elems
@@ -146,3 +145,4 @@ class SON
 		return str
 
 c.log 'ready'
+
