@@ -1,7 +1,7 @@
-profile
-	cover_pic assets/sunflowers.jpg
-	profile_pic assets/profile_pic.jpg
-	name Noj Vek
+profile:
+	cover_pic: assets/sunflowers.jpg
+	profile_pic: assets/profile_pic.jpg
+	name: Noj Vek
 	blurb I hand craft aesthetic applications
 
 

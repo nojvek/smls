@@ -122,6 +122,10 @@ BlockParser = (function() {
 SON = (function() {
   function SON() {}
 
+  SON.regexes = {
+    word: "\"(?:[^\\\\]*(?:\\\\.)?)*\"|'(?:[^\\\\]*(?:\\\\.)?)*'|\\S+"
+  };
+
   SON.parseObject = function(tree) {
     var block, line, matches, obj, prop, table, val, _i, _len, _ref;
     if (!(tree && tree.blocks)) {
@@ -135,9 +139,9 @@ SON = (function() {
       if (line.substr(0, 2) === "//") {
         continue;
       }
-      matches = line.match(/(\w+)(\s+(.*))?/);
+      matches = line.match(/^(\S+)\:?(?:\s+(.*))?/);
       prop = matches[1];
-      val = matches[3];
+      val = matches[2];
       if (val === void 0) {
         val = this.parseObject(block);
       } else if (val === '*') {
@@ -160,7 +164,7 @@ SON = (function() {
     }
     arr = [];
     headers = null;
-    sepRegexp = /"(?:[^\\]*(?:\\.)?)*"|'(?:[^\\]*(?:\\.)?)*'|\S+/g;
+    sepRegexp = new RegExp(this.regexes.word, 'g');
     if (tree && tree.blocks) {
       _ref = tree.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -216,5 +220,3 @@ SON = (function() {
 })();
 
 c.log('ready');
-
- //# sourceMappingURL=son.js.map

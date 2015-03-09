@@ -76,6 +76,9 @@ class BlockParser
 
 
 class SON
+	@regexes:
+		word: "\"(?:[^\\\\]*(?:\\\\.)?)*\"|'(?:[^\\\\]*(?:\\\\.)?)*'|\\S+"
+
 	@parseObject: (tree) ->
 		if not (tree and tree.blocks) then return null
 
@@ -86,9 +89,9 @@ class SON
 			if line.substr(0,2) == "//" then continue
 
 			# todo - handle one liners
-			matches = line.match(/(\w+)(\s+(.*))?/)
+			matches = line.match(/^(\S+)\:?(?:\s+(.*))?/)
 			prop = matches[1]
-			val = matches[3]
+			val = matches[2]
 
 			if val == undefined then val = @parseObject(block)
 			else if val == '*' then val = @parseArray(block)
@@ -102,7 +105,8 @@ class SON
 		arr = []
 
 		headers = null
-		sepRegexp = /"(?:[^\\]*(?:\\.)?)*"|'(?:[^\\]*(?:\\.)?)*'|\S+/g
+		sepRegexp = new RegExp(@regexes.word, 'g')
+
 
 		if tree and tree.blocks
 			for block in tree.blocks

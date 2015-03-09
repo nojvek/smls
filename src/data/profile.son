@@ -3,7 +3,7 @@ lastName Smith
 isAlive true
 age 25
 height_cm 167.6
-address - street='21 2nd Street' city='New York' state=NY postalCode=10021-3100 //one liner
+address - street: '21 2nd Street' city:'New York' state:NY postalCode:10021-3100
 
 // Notes is in markdown 
 	A comment can be accross multi line
