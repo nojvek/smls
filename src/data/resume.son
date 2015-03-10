@@ -1,112 +1,112 @@
-profile:
-	cover_pic: assets/sunflowers.jpg
-	profile_pic: assets/profile_pic.jpg
-	name: Noj Vek
-	blurb I hand craft aesthetic applications
+			profile:
+					cover_pic: assets/sunflowers.jpg
+					profile_pic: assets/profile_pic.jpg
+					name: Noj Vek
+					blurb I hand craft aesthetic applications
 
 
-// This is a comment here
+			// This is a comment here
 
-experiences *
-	-	company_name=Microsoft company_url=http://microsoft.com company_logo=assets/microsoft_logo.png
-		position='Software Engineer' 	location='Vancouver, Canada & Seattle, United States'
-		duration='May 2010 - Present' projects= *
-			-
-				video_url 3Av_I7UZrTY
-				desc *
-					Working with Microsoft Power BI (Business Intelligence) team to develop the next generation of toolset for Big Data and Analytics.
-					Developed authoring features and report editor. Worked on build systems and got a good grasp of how software with millions of lines of code is managed.
-					Technologies Typescript / CSS3 / HTML5 for frontend and C++ on the backend. 
+			experiences *
+				-	company_name=Microsoft company_url=http://microsoft.com company_logo=assets/microsoft_logo.png
+					position='Software Engineer' 	location='Vancouver, Canada & Seattle, United States'
+					duration='May 2010 - Present' projects= *
+						-
+							video_url 3Av_I7UZrTY
+							desc *
+								Working with Microsoft Power BI (Business Intelligence) team to develop the next generation of toolset for Big Data and Analytics.
+								Developed authoring features and report editor. Worked on build systems and got a good grasp of how software with millions of lines of code is managed.
+								Technologies Typescript / CSS3 / HTML5 for frontend and C++ on the backend. 
 
-	-
-		company_name Rocketboots
-		company_url http://rocketboots.com
-		company_logo assets/rocketboots_logo.png
-		position Software Engineer
-		location Sydney, Australia
-		duration Mar 2009 - Dec 2013
-		projects *
-			-
-				video_url BEba5iVmlEQ
-				desc *
-					RocketBoots is a software consultancy firm that provides technology solutions to a growing list of blue chip companies. 
-					RocketBoots has expertise in  web, desktop, mobile and embedded solutions.
-					Currently at 13 employees and experiencing a fast growth, I joined as employee #1.
+				-
+					company_name Rocketboots
+					company_url http://rocketboots.com
+					company_logo assets/rocketboots_logo.png
+					position Software Engineer
+					location Sydney, Australia
+					duration Mar 2009 - Dec 2013
+					projects *
+						-
+							video_url BEba5iVmlEQ
+							desc *
+								RocketBoots is a software consultancy firm that provides technology solutions to a growing list of blue chip companies. 
+								RocketBoots has expertise in  web, desktop, mobile and embedded solutions.
+								Currently at 13 employees and experiencing a fast growth, I joined as employee #1.
 
-	-
-		company_name Smart Sparrow
-		company_url http://smartsparrow.com
-		company_logo assets/smart_sparrow_logo.png
-		position Junior Software Engineer
-		location Sydney, Australia
-		duration Jul 2008 - Jan 2009
-		projects *
-			-
-				video_url BEba5iVmlEQ
-				desc *
-					RocketBoots is a software consultancy firm that provides technology solutions to a growing list of blue chip companies. RocketBoots has expertise in  web, desktop, mobile and embedded solutions.
-					Currently at 13 employees and experiencing a fast growth, I joined as employee #1.
-	-
-		company_name University of New South Wales
-		company_url http://unsw.edu.au
-		company_logo assets/unsw_logo.png
-		position Academic Tutor
-		location Sydney, Australia
-		duration Mar 2007 - Jan 2009
-		projects *
-			-
-				video_url BEba5iVmlEQ
-				desc *
-					Awarded highest achieving student in \Computing for Engineers\ in 1 st year.
-					Applied for opportunity to tutor 1st year Engineering students and introduce them to programming and problem solving.
+				-
+					company_name Smart Sparrow
+					company_url http://smartsparrow.com
+					company_logo assets/smart_sparrow_logo.png
+					position Junior Software Engineer
+					location Sydney, Australia
+					duration Jul 2008 - Jan 2009
+					projects *
+						-
+							video_url BEba5iVmlEQ
+							desc *
+								RocketBoots is a software consultancy firm that provides technology solutions to a growing list of blue chip companies. RocketBoots has expertise in  web, desktop, mobile and embedded solutions.
+								Currently at 13 employees and experiencing a fast growth, I joined as employee #1.
+				-
+					company_name University of New South Wales
+					company_url http://unsw.edu.au
+					company_logo assets/unsw_logo.png
+					position Academic Tutor
+					location Sydney, Australia
+					duration Mar 2007 - Jan 2009
+					projects *
+						-
+							video_url BEba5iVmlEQ
+							desc *
+								Awarded highest achieving student in \Computing for Engineers\ in 1 st year.
+								Applied for opportunity to tutor 1st year Engineering students and introduce them to programming and problem solving.
 
-education *
-	-
-		institution_name Univserity of New South Wales (UNSW)
-		institution_url http://unsw.edu.au
-		degree Bsc Computer Science
-		duration July 2006 - Aug 2009
-		courses *
-			Computing for Engineers
-			Data Structures & Algorithms
-			Discrete Mathematics
-			Microprocessors & Embedded Systems
-			Database Systems & Implementation
-			(Advanced) Computer Graphics
-			Artificial Intelligence
-			Language Design & Compilers
-			Operating Systems
-			Networks & Distributed Systems
+			education *
+				-
+					institution_name Univserity of New South Wales (UNSW)
+					institution_url http://unsw.edu.au
+					degree Bsc Computer Science
+					duration July 2006 - Aug 2009
+					courses *
+						Computing for Engineers
+						Data Structures & Algorithms
+						Discrete Mathematics
+						Microprocessors & Embedded Systems
+						Database Systems & Implementation
+						(Advanced) Computer Graphics
+						Artificial Intelligence
+						Language Design & Compilers
+						Operating Systems
+						Networks & Distributed Systems
 
-skills *-
-	skills		level
-	Java		Expert
-	HTML/CSS3	Expert
-	Java		Expert
-	HTML/CSS	Expert
-	Javascript	Expert
-	PHP			Expert
-	Python		Expert
-	'Linux Bash'	Expert
-	'Adobe Flash / Flex'	Expert
-	C++			Intermediate
-	Obj-C		Intermediate
+			skills *-
+				skills		level
+				Java		Expert
+				HTML/CSS3	Expert
+				Java		Expert
+				HTML/CSS	Expert
+				Javascript	Expert
+				PHP			Expert
+				Python		Expert
+				'Linux Bash'	Expert
+				'Adobe Flash / Flex'	Expert
+				C++			Intermediate
+				Obj-C		Intermediate
 
-achievements *
-	Startup Weekend Vancouver 2013 (1st Position)
-	ACM Programming Competition 2008 (Participant), 2009 (2nd Group Position)
-	Google Code Jam 2009 regional winner
-	Nvidia Killer Kernel Contest 2009 – 1st Position
-	CSE-UNSW “Beta“ newsletter editor
-	Invigilator for High School RoboCup competition at UNSW
-	Speaker at WebDU Conference (Australia).
-	Volunteer for Vancouver’s largest tech conference – GrowConf.
-	Spearker at Adobe User Group, Google Technology User Group
-	Developed a crowd voting system that utilises fast fourier transform based tone recognition.
-	Developed video tutoring portal for university students (Before Coursera and video eLearning was popular)
-	Developed CSE iLab mobile application that allows university students to view lab, server and classroom availability on mobile devices.
-	World vision volunteer
-	Regular blood donor for Red Cross
-	University Open Day volunteer
+			achievements *
+				Startup Weekend Vancouver 2013 (1st Position)
+				ACM Programming Competition 2008 (Participant), 2009 (2nd Group Position)
+				Google Code Jam 2009 regional winner
+				Nvidia Killer Kernel Contest 2009 – 1st Position
+				CSE-UNSW “Beta“ newsletter editor
+				Invigilator for High School RoboCup competition at UNSW
+				Speaker at WebDU Conference (Australia).
+				Volunteer for Vancouver’s largest tech conference – GrowConf.
+				Spearker at Adobe User Group, Google Technology User Group
+				Developed a crowd voting system that utilises fast fourier transform based tone recognition.
+				Developed video tutoring portal for university students (Before Coursera and video eLearning was popular)
+				Developed CSE iLab mobile application that allows university students to view lab, server and classroom availability on mobile devices.
+				World vision volunteer
+				Regular blood donor for Red Cross
+				University Open Day volunteer
 
 

@@ -4,11 +4,11 @@ c = console;
 
 BlockParser = {
   tokenizeIndents: function(str) {
-    var chr, col, curIndent, i, indentChr, indentLevels, level, line, lineNum, prevIndent, tokens, trimmed, _i, _j, _k, _l, _len, _len1, _ref, _ref1;
-    prevIndent = 0;
-    curIndent = 0;
-    indentLevels = [];
+    var chr, col, curIndentLevel, i, indentChange, indentChr, indentLevels, level, line, lineNum, prevIndentLevel, tokens, trimmed, _i, _j, _k, _len, _len1, _ref, _ref1;
     indentChr = null;
+    prevIndentLevel = null;
+    curIndentLevel = null;
+    indentLevels = [];
     tokens = [];
     _ref = str.split("\n");
     for (lineNum = _i = 0, _len = _ref.length; _i < _len; lineNum = ++_i) {
@@ -18,40 +18,48 @@ BlockParser = {
       if (trimmed === "") {
         continue;
       }
-      curIndent = 0;
+      curIndentLevel = 0;
       for (col = _j = 0, _len1 = line.length; _j < _len1; col = ++_j) {
         chr = line[col];
         if (chr === " " || chr === "\t") {
-          if (indentChr && indentChr !== chr) {
-            throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum);
-          } else {
+          curIndentLevel += 1;
+          if (indentChr === null) {
             indentChr = chr;
-            curIndent += 1;
+          } else if (indentChr !== chr) {
+            throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum);
           }
         } else {
-          if (curIndent > prevIndent) {
-            indentLevels.push(curIndent);
-            if (indentLevels.length > 1) {
-              tokens.push({
-                type: 'INDENT',
-                lineNum: lineNum,
-                level: indentLevels.slice()
-              });
-            }
-          } else if (curIndent < prevIndent) {
-            for (_k = indentLevels.length - 1; _k >= 0; _k += -1) {
-              level = indentLevels[_k];
-              if (level > curIndent) {
+          if (prevIndentLevel === null) {
+            prevIndentLevel = curIndentLevel;
+            indentLevels.push(curIndentLevel);
+          }
+          indentChange = curIndentLevel - prevIndentLevel;
+          if (indentChange > 0) {
+            indentLevels.push(curIndentLevel);
+            tokens.push({
+              type: 'INDENT',
+              lineNum: lineNum,
+              val: line.substr(prevIndentLevel, indentChange)
+            });
+          } else if (indentChange < 0) {
+            i = indentLevels.length - 1;
+            while (true) {
+              if (i < 0) {
+                throw new Error("Invalid indentationLevel:" + curIndentLevel + " . Dedentation lower than base. Line:" + lineNum);
+              }
+              level = indentLevels[i];
+              if (curIndentLevel < level) {
                 indentLevels.pop();
                 tokens.push({
                   type: 'DEDENT',
                   lineNum: lineNum,
                   level: indentLevels.slice()
                 });
-              } else if (level === curIndent) {
-                break;
+                --i;
+              } else if (curIndentLevel > level) {
+                throw new Error("Invalid indentationLevel:" + curIndentLevel + " . Dedentation misaligned. Line:" + lineNum);
               } else {
-                throw new Error("Invalid indentationLevel:" + curIndent + " . Ensure indent alignment. Line:" + lineNum);
+                break;
               }
             }
           }
@@ -60,13 +68,13 @@ BlockParser = {
             lineNum: lineNum,
             val: trimmed
           });
-          prevIndent = curIndent;
+          prevIndentLevel = curIndentLevel;
           break;
         }
       }
     }
     if (indentLevels.length > 0) {
-      for (i = _l = 0, _ref1 = indentLevels.length - 1; _l < _ref1; i = _l += 1) {
+      for (i = _k = 0, _ref1 = indentLevels.length - 1; _k < _ref1; i = _k += 1) {
         tokens.push({
           type: 'DEDENT',
           lineNum: lineNum

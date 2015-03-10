@@ -3,10 +3,10 @@ c = console
 BlockParser =
 	## TODO, make this work for spaced indents as well
 	tokenizeIndents: (str) ->
-		prevIndent = 0
-		curIndent = 0
-		indentLevels = []
 		indentChr = null
+		prevIndentLevel = null
+		curIndentLevel = null
+		indentLevels = []
 		tokens = []
 
 
@@ -16,41 +16,49 @@ BlockParser =
 			trimmed = $.trim(line)
 
 			if trimmed == ""
-				#tokens.push(type: 'LINE', lineNum: lineNum, val: trimmed)
+				#if prevIndentLevel != null
+					#tokens.push(type: 'LINE', lineNum: lineNum, val: trimmed)
 				continue
 
-			curIndent = 0
-			for chr, col in line
-				if chr == " " || chr == "\t"
-					if indentChr and indentChr != chr
-						throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum)
-					else
+			curIndentLevel = 0
+			for chr, col in line #first non empty line
+				if chr == " " || chr == "\t" #count indentation
+					curIndentLevel += 1
+
+					if indentChr == null
 						indentChr = chr
-						curIndent += 1
+					else if indentChr != chr
+						throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum)
 
-				else
-					if curIndent > prevIndent
-						indentLevels.push(curIndent)
+				else #process line
+					if prevIndentLevel == null #push base indentation
+						prevIndentLevel = curIndentLevel
+						indentLevels.push(curIndentLevel)
 
-						# first indentLevel is used as base
-						if indentLevels.length > 1
-							tokens.push(type:'INDENT', lineNum: lineNum, level: indentLevels.slice())
+					indentChange = curIndentLevel - prevIndentLevel
 
-					else if curIndent < prevIndent
+					if indentChange > 0
+						indentLevels.push(curIndentLevel)
+						tokens.push(type:'INDENT', lineNum: lineNum, val: line.substr(prevIndentLevel, indentChange))
 
-						for level in indentLevels by -1
-							if level > curIndent
-								indentLevels.pop() 
+					else if indentChange < 0
+						i = indentLevels.length - 1
+						while true
+							if i < 0
+								throw new Error("Invalid indentationLevel:" + curIndentLevel + " . Dedentation lower than base. Line:" + lineNum)
+							
+							level = indentLevels[i]
+							if curIndentLevel < level
+								indentLevels.pop()
 								tokens.push(type:'DEDENT', lineNum: lineNum, level: indentLevels.slice())
-
-							else if level == curIndent
+								--i
+							else if curIndentLevel > level
+								throw new Error("Invalid indentationLevel:" + curIndentLevel + " . Dedentation misaligned. Line:" + lineNum)
+							else 
 								break
-
-							else
-								throw new Error("Invalid indentationLevel:" + curIndent + " . Ensure indent alignment. Line:" + lineNum)
-					
+				
 					tokens.push(type: 'LINE', lineNum: lineNum, val: trimmed)
-					prevIndent = curIndent
+					prevIndentLevel = curIndentLevel
 					break;
 
 		if indentLevels.length > 0
