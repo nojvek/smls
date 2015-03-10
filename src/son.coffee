@@ -1,41 +1,67 @@
 c = console
 
-class BlockParser
+BlockParser =
 	## TODO, make this work for spaced indents as well
-	@tokenizeIndents: (str) ->
+	tokenizeIndents: (str) ->
 		prevIndent = 0
-		baseIndent = -1
+		curIndent = 0
+		indentLevels = []
+		indentChr = null
 		tokens = []
+
 
 		#TODO: optimize this for single character look ahead
 		for line, lineNum in str.split("\n")
-			if $.trim(line) == "" then continue
+			lineNum += 1
+			trimmed = $.trim(line)
 
-			indents = 0
-			for chr, index in line
-				if chr == "\t" then indents += 1 
+			if trimmed == ""
+				#tokens.push(type: 'LINE', lineNum: lineNum, val: trimmed)
+				continue
+
+			curIndent = 0
+			for chr, col in line
+				if chr == " " || chr == "\t"
+					if indentChr and indentChr != chr
+						throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum)
+					else
+						indentChr = chr
+						curIndent += 1
+
 				else
-					indentChange = indents - prevIndent
-					prevIndent = indents
+					if curIndent > prevIndent
+						indentLevels.push(curIndent)
 
-					if indentChange > 0
-						tokens.push(type:'indent', lineNum: lineNum)
-					else if indentChange < 0
-						for i in [0...-indentChange]
-							tokens.push(type:'dedent', lineNum: lineNum)
+						# first indentLevel is used as base
+						if indentLevels.length > 1
+							tokens.push(type:'INDENT', lineNum: lineNum, level: indentLevels.slice())
+
+					else if curIndent < prevIndent
+
+						for level in indentLevels by -1
+							if level > curIndent
+								indentLevels.pop() 
+								tokens.push(type:'DEDENT', lineNum: lineNum, level: indentLevels.slice())
+
+							else if level == curIndent
+								break
+
+							else
+								throw new Error("Invalid indentationLevel:" + curIndent + " . Ensure indent alignment. Line:" + lineNum)
 					
-					tokens.push(type: 'line', lineNum: lineNum, val: $.trim(line.substr(index)))
+					tokens.push(type: 'LINE', lineNum: lineNum, val: trimmed)
+					prevIndent = curIndent
 					break;
 
-		if prevIndent > 0
-			for i in [0...prevIndent]
-				tokens.push(type:'dedent')
+		if indentLevels.length > 0
+			for i in [0...indentLevels.length - 1] by 1
+				tokens.push(type:'DEDENT', lineNum: lineNum)
 
-		tokens.push(type:'eof')
+		tokens.push(type:'EOF')
 
 		return tokens
 
-	@parseBlocks: (lineTokens) ->
+	parseBlocks: (lineTokens) ->
 		rootBlock = {blocks:[]}
 		index = 0
 
@@ -46,20 +72,20 @@ class BlockParser
 		parseBlock = (parentBlock) ->
 			while true
 				token = peek()
-				if token.type == 'eof' then break
+				if token.type == 'EOF' then break
 
 				switch token.type
-					when 'line'
+					when 'LINE'
 						consume()
 						block = {line: token.val, lineNum: token.lineNum}
 						parentBlock.blocks.push(block)
 
-					when 'indent'
+					when 'INDENT'
 						consume()
 						if not block.blocks then block.blocks = []
 						block = parseBlock(block)
 
-					when 'dedent'
+					when 'DEDENT'
 						consume()
 						return parentBlock
 
@@ -69,8 +95,10 @@ class BlockParser
 		rootBlock = parseBlock({line:"", blocks:[]})
 		return rootBlock
 
-	@parse: (str) ->
+	parse: (str) ->
 		lineTokens = @tokenizeIndents(str)
+		#console.log(lineTokens)
+		#return lineTokens
 		blockTree = @parseBlocks(lineTokens)
 		return blockTree
 
@@ -134,8 +162,8 @@ class SON
 	@parse: (str) ->
 		tree = BlockParser.parse(str)
 		data = @parseObject(tree)
-		c.log(tree)
-
+		#c.log(tree)
+		#return tree
 		return data
 
 

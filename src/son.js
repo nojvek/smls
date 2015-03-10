@@ -2,64 +2,83 @@ var BlockParser, SON, c;
 
 c = console;
 
-BlockParser = (function() {
-  function BlockParser() {}
-
-  BlockParser.tokenizeIndents = function(str) {
-    var baseIndent, chr, i, indentChange, indents, index, line, lineNum, prevIndent, tokens, _i, _j, _k, _l, _len, _len1, _ref;
+BlockParser = {
+  tokenizeIndents: function(str) {
+    var chr, col, curIndent, i, indentChr, indentLevels, level, line, lineNum, prevIndent, tokens, trimmed, _i, _j, _k, _l, _len, _len1, _ref, _ref1;
     prevIndent = 0;
-    baseIndent = -1;
+    curIndent = 0;
+    indentLevels = [];
+    indentChr = null;
     tokens = [];
     _ref = str.split("\n");
     for (lineNum = _i = 0, _len = _ref.length; _i < _len; lineNum = ++_i) {
       line = _ref[lineNum];
-      if ($.trim(line) === "") {
+      lineNum += 1;
+      trimmed = $.trim(line);
+      if (trimmed === "") {
         continue;
       }
-      indents = 0;
-      for (index = _j = 0, _len1 = line.length; _j < _len1; index = ++_j) {
-        chr = line[index];
-        if (chr === "\t") {
-          indents += 1;
+      curIndent = 0;
+      for (col = _j = 0, _len1 = line.length; _j < _len1; col = ++_j) {
+        chr = line[col];
+        if (chr === " " || chr === "\t") {
+          if (indentChr && indentChr !== chr) {
+            throw new Error("BlockParser: inconsistent indentation character. Choose either tabs or spaces. Line:" + lineNum);
+          } else {
+            indentChr = chr;
+            curIndent += 1;
+          }
         } else {
-          indentChange = indents - prevIndent;
-          prevIndent = indents;
-          if (indentChange > 0) {
-            tokens.push({
-              type: 'indent',
-              lineNum: lineNum
-            });
-          } else if (indentChange < 0) {
-            for (i = _k = 0; 0 <= -indentChange ? _k < -indentChange : _k > -indentChange; i = 0 <= -indentChange ? ++_k : --_k) {
+          if (curIndent > prevIndent) {
+            indentLevels.push(curIndent);
+            if (indentLevels.length > 1) {
               tokens.push({
-                type: 'dedent',
-                lineNum: lineNum
+                type: 'INDENT',
+                lineNum: lineNum,
+                level: indentLevels.slice()
               });
+            }
+          } else if (curIndent < prevIndent) {
+            for (_k = indentLevels.length - 1; _k >= 0; _k += -1) {
+              level = indentLevels[_k];
+              if (level > curIndent) {
+                indentLevels.pop();
+                tokens.push({
+                  type: 'DEDENT',
+                  lineNum: lineNum,
+                  level: indentLevels.slice()
+                });
+              } else if (level === curIndent) {
+                break;
+              } else {
+                throw new Error("Invalid indentationLevel:" + curIndent + " . Ensure indent alignment. Line:" + lineNum);
+              }
             }
           }
           tokens.push({
-            type: 'line',
+            type: 'LINE',
             lineNum: lineNum,
-            val: $.trim(line.substr(index))
+            val: trimmed
           });
+          prevIndent = curIndent;
           break;
         }
       }
     }
-    if (prevIndent > 0) {
-      for (i = _l = 0; 0 <= prevIndent ? _l < prevIndent : _l > prevIndent; i = 0 <= prevIndent ? ++_l : --_l) {
+    if (indentLevels.length > 0) {
+      for (i = _l = 0, _ref1 = indentLevels.length - 1; _l < _ref1; i = _l += 1) {
         tokens.push({
-          type: 'dedent'
+          type: 'DEDENT',
+          lineNum: lineNum
         });
       }
     }
     tokens.push({
-      type: 'eof'
+      type: 'EOF'
     });
     return tokens;
-  };
-
-  BlockParser.parseBlocks = function(lineTokens) {
+  },
+  parseBlocks: function(lineTokens) {
     var consume, index, parseBlock, peek, rootBlock;
     rootBlock = {
       blocks: []
@@ -75,11 +94,11 @@ BlockParser = (function() {
       var block, token;
       while (true) {
         token = peek();
-        if (token.type === 'eof') {
+        if (token.type === 'EOF') {
           break;
         }
         switch (token.type) {
-          case 'line':
+          case 'LINE':
             consume();
             block = {
               line: token.val,
@@ -87,14 +106,14 @@ BlockParser = (function() {
             };
             parentBlock.blocks.push(block);
             break;
-          case 'indent':
+          case 'INDENT':
             consume();
             if (!block.blocks) {
               block.blocks = [];
             }
             block = parseBlock(block);
             break;
-          case 'dedent':
+          case 'DEDENT':
             consume();
             return parentBlock;
         }
@@ -106,18 +125,14 @@ BlockParser = (function() {
       blocks: []
     });
     return rootBlock;
-  };
-
-  BlockParser.parse = function(str) {
+  },
+  parse: function(str) {
     var blockTree, lineTokens;
     lineTokens = this.tokenizeIndents(str);
     blockTree = this.parseBlocks(lineTokens);
     return blockTree;
-  };
-
-  return BlockParser;
-
-})();
+  }
+};
 
 SON = (function() {
   function SON() {}
@@ -198,7 +213,6 @@ SON = (function() {
     var data, tree;
     tree = BlockParser.parse(str);
     data = this.parseObject(tree);
-    c.log(tree);
     return data;
   };
 
