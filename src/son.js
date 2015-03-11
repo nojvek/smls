@@ -142,14 +142,11 @@ BlockParser = {
   }
 };
 
-SON = (function() {
-  function SON() {}
-
-  SON.regexes = {
+SON = {
+  regexes: {
     word: "\"(?:[^\\\\]*(?:\\\\.)?)*\"|'(?:[^\\\\]*(?:\\\\.)?)*'|\\S+"
-  };
-
-  SON.parseObject = function(tree) {
+  },
+  parseObject: function(tree) {
     var block, line, matches, obj, prop, table, val, _i, _len, _ref;
     if (!(tree && tree.blocks)) {
       return null;
@@ -175,9 +172,8 @@ SON = (function() {
       obj[prop] = val;
     }
     return obj;
-  };
-
-  SON.parseArray = function(tree, table, grid) {
+  },
+  parseArray: function(tree, table, grid) {
     var arr, block, elems, header, headers, i, line, sepRegexp, _i, _j, _len, _len1, _ref;
     if (table == null) {
       table = false;
@@ -215,17 +211,15 @@ SON = (function() {
       }
     }
     return arr;
-  };
-
-  SON.parse = function(str) {
+  },
+  parse: function(str) {
     var data, tree;
     tree = BlockParser.parse(str);
     data = this.parseObject(tree);
     return data;
-  };
-
-  SON.dump = function(data, indentChr) {
-    var dumpObj, genIndents, isSimpleObject;
+  },
+  dump: function(data, indentChr) {
+    var dumpObj, genIndents;
     if (indentChr == null) {
       indentChr = "\t";
     }
@@ -240,31 +234,32 @@ SON = (function() {
       }
       return str;
     };
-    isSimpleObject = function(item) {
-      return item instanceof Object && !item instanceof Array;
-    };
-    dumpObj = function(item, level, objOfObj) {
-      var key, lines, val, _i, _len;
-      if (objOfObj == null) {
-        objOfObj = false;
+    dumpObj = function(item, level, objOfArr) {
+      var key, lines, prevWasObject, val, _i, _len;
+      if (objOfArr == null) {
+        objOfArr = false;
       }
       lines = [];
       if (item instanceof Array) {
         lines.push("*");
         for (_i = 0, _len = item.length; _i < _len; _i++) {
           val = item[_i];
-          lines.push(genIndents(level) + dumpObj(val, level + 1));
+          lines.push(genIndents(level) + dumpObj(val, level + 1, true));
         }
       } else if (item instanceof Object) {
-        if (!objOfObj) {
+        prevWasObject = false;
+        if (objOfArr) {
           lines.push("-");
+        } else {
+          lines.push("");
         }
         for (key in item) {
           val = item[key];
-          if (val instanceof Object) {
+          if (prevWasObject) {
             lines.push("");
           }
-          lines.push(genIndents(level) + key + " " + dumpObj(val, level + 1, isSimpleObject(val)));
+          prevWasObject = val instanceof Object || val instanceof Array;
+          lines.push(genIndents(level) + key + " " + dumpObj(val, level + 1));
         }
       } else if (item === void 0 || item === null) {
         return "null";
@@ -273,21 +268,10 @@ SON = (function() {
       }
       return lines.join("\n");
     };
-    return dumpObj(data, 0, isSimpleObject(data));
-    return c.log(object);
-  };
-
-  SON.tabs = function(numTabs) {
-    var i, str, _i;
-    str = "";
-    for (i = _i = 0; _i < numTabs; i = _i += 1) {
-      str += "\t";
+    if (data instanceof Array) {
+      return dumpObj(data, 1);
+    } else {
+      return dumpObj(data, 0);
     }
-    return str;
-  };
-
-  return SON;
-
-})();
-
-c.log('ready');
+  }
+};

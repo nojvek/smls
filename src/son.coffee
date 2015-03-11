@@ -1,7 +1,6 @@
 c = console
 
 BlockParser =
-	## TODO, make this work for spaced indents as well
 	tokenizeIndents: (str) ->
 		indentChr = null
 		prevIndentLevel = null
@@ -110,11 +109,11 @@ BlockParser =
 		return blockTree
 
 
-class SON
-	@regexes:
+SON = 
+	regexes:
 		word: "\"(?:[^\\\\]*(?:\\\\.)?)*\"|'(?:[^\\\\]*(?:\\\\.)?)*'|\\S+"
 
-	@parseObject: (tree) ->
+	parseObject: (tree) ->
 		if not (tree and tree.blocks) then return null
 
 		obj = {}
@@ -136,7 +135,7 @@ class SON
 
 		return obj
 
-	@parseArray: (tree, table = false, grid = false) ->
+	parseArray: (tree, table = false, grid = false) ->
 		arr = []
 
 		headers = null
@@ -166,7 +165,7 @@ class SON
 				arr.push(line)
 		return arr
 
-	@parse: (str) ->
+	parse: (str) ->
 		tree = BlockParser.parse(str)
 		data = @parseObject(tree)
 		#c.log(tree)
@@ -174,7 +173,7 @@ class SON
 		return data
 
 
-	@dump: (data, indentChr="\t") ->
+	dump: (data, indentChr="\t") ->
 		if not (data instanceof Array or data instanceof Object)
 			throw new Error("data" + data + "not type of object or array")
 
@@ -184,22 +183,22 @@ class SON
 				str += indentChr
 			return str
 
-		isSimpleObject = (item) ->
-			return item instanceof Object and not item instanceof Array
-
-		dumpObj = (item, level, objOfObj = false) ->
+		dumpObj = (item, level, objOfArr = false) ->
 			lines = []
 
 			if item instanceof Array
 				lines.push "*"
 				for val in item
-					lines.push genIndents(level) + dumpObj(val, level + 1)
+					lines.push genIndents(level) + dumpObj(val, level + 1, true)
 
 			else if item instanceof Object
-				if not objOfObj then lines.push "-"
+				prevWasObject = false
+				if objOfArr then lines.push("-") else lines.push ""
 				for key, val of item
-					if val instanceof Object then lines.push ""
-					lines.push genIndents(level) + key + " " + dumpObj(val, level + 1, isSimpleObject(val))
+					# add new lines between array and object properties
+					if prevWasObject then lines.push ""
+					prevWasObject = val instanceof Object or val instanceof Array
+					lines.push genIndents(level) + key + " " + dumpObj(val, level + 1)
 
 			else if item == undefined or item == null
 				return "null"
@@ -208,15 +207,5 @@ class SON
 
 			return lines.join("\n")
 
-		return dumpObj(data, 0, isSimpleObject(data))
-
-		# TODO Implement dumper
-		c.log(object)
-
-	@tabs: (numTabs) ->
-		str = ""
-		(str += "\t" for i in [0...numTabs] by 1)
-		return str
-
-c.log 'ready'
-
+		# skip initial indentation on objects
+		return if data instanceof Array then dumpObj(data, 1) else dumpObj(data, 0)
