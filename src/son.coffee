@@ -9,7 +9,6 @@ BlockParser =
 		indentLevels = []
 		tokens = []
 
-
 		#TODO: optimize this for single character look ahead
 		for line, lineNum in str.split("\n")
 			lineNum += 1
@@ -175,7 +174,42 @@ class SON
 		return data
 
 
-	@dump: (object) ->
+	@dump: (data, indentChr="\t") ->
+		if not (data instanceof Array or data instanceof Object)
+			throw new Error("data" + data + "not type of object or array")
+
+		genIndents = (level) ->
+			str = ""
+			for i in [0 ... level] by 1
+				str += indentChr
+			return str
+
+		isSimpleObject = (item) ->
+			return item instanceof Object and not item instanceof Array
+
+		dumpObj = (item, level, objOfObj = false) ->
+			lines = []
+
+			if item instanceof Array
+				lines.push "*"
+				for val in item
+					lines.push genIndents(level) + dumpObj(val, level + 1)
+
+			else if item instanceof Object
+				if not objOfObj then lines.push "-"
+				for key, val of item
+					if val instanceof Object then lines.push ""
+					lines.push genIndents(level) + key + " " + dumpObj(val, level + 1, isSimpleObject(val))
+
+			else if item == undefined or item == null
+				return "null"
+			else 
+				return item.toString()
+
+			return lines.join("\n")
+
+		return dumpObj(data, 0, isSimpleObject(data))
+
 		# TODO Implement dumper
 		c.log(object)
 

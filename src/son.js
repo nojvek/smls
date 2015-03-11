@@ -224,7 +224,56 @@ SON = (function() {
     return data;
   };
 
-  SON.dump = function(object) {
+  SON.dump = function(data, indentChr) {
+    var dumpObj, genIndents, isSimpleObject;
+    if (indentChr == null) {
+      indentChr = "\t";
+    }
+    if (!(data instanceof Array || data instanceof Object)) {
+      throw new Error("data" + data + "not type of object or array");
+    }
+    genIndents = function(level) {
+      var i, str, _i;
+      str = "";
+      for (i = _i = 0; _i < level; i = _i += 1) {
+        str += indentChr;
+      }
+      return str;
+    };
+    isSimpleObject = function(item) {
+      return item instanceof Object && !item instanceof Array;
+    };
+    dumpObj = function(item, level, objOfObj) {
+      var key, lines, val, _i, _len;
+      if (objOfObj == null) {
+        objOfObj = false;
+      }
+      lines = [];
+      if (item instanceof Array) {
+        lines.push("*");
+        for (_i = 0, _len = item.length; _i < _len; _i++) {
+          val = item[_i];
+          lines.push(genIndents(level) + dumpObj(val, level + 1));
+        }
+      } else if (item instanceof Object) {
+        if (!objOfObj) {
+          lines.push("-");
+        }
+        for (key in item) {
+          val = item[key];
+          if (val instanceof Object) {
+            lines.push("");
+          }
+          lines.push(genIndents(level) + key + " " + dumpObj(val, level + 1, isSimpleObject(val)));
+        }
+      } else if (item === void 0 || item === null) {
+        return "null";
+      } else {
+        return item.toString();
+      }
+      return lines.join("\n");
+    };
+    return dumpObj(data, 0, isSimpleObject(data));
     return c.log(object);
   };
 

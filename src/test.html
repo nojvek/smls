@@ -8,9 +8,10 @@
 				$.ajax({
 					url: 'data/resume.son',
 					success: function(str){
-						$("#in").text(str)
+						$("#src").text(str)
 						data = SON.parse(str)
-						$("#out").text(JSON.stringify(data, null, 4))
+						$("#parse").text(JSON.stringify(data, null, 4))
+						$("#dump").text(SON.dump(data, "\t"))
 					}
 				})
 			})
@@ -26,7 +27,8 @@
 		</style>
 	</head>
 	<body>
-		<pre id="in"></pre>
-		<pre id="out"></pre>
+		<pre id="src"></pre>
+		<pre id="parse"></pre>
+		<pre id="dump"></pre>
 	</body>
 </html>
